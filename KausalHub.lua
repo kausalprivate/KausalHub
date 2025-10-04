@@ -34,8 +34,8 @@ end)
 
 local islandPositions = {
     ["Fisherman Island"] = Vector3.new(123, 3, 2782),
-    ["Pirate Island"] = Vector3.new(250, 10, 100),
-    ["Magma Island"] = Vector3.new(-300, 10, 150),
+    ["Kohana Island"] = Vector3.new(-633, 16, 609),
+    ["Coral Reefs"] = Vector3.new(-2795, 7, 2130),
     ["Snow Island"] = Vector3.new(350, 10, -200),
     ["Desert Island"] = Vector3.new(150, 10, -300),
     ["Sky Island"] = Vector3.new(0, 500, 0),
@@ -120,3 +120,4 @@ Fluent:Notify({
     Content = "UI Loaded Successfully!",
     Duration = 5
 })
+
