@@ -26,6 +26,7 @@ Tabs.Main:AddToggle("AutoFarm", {
         task.spawn(function()
             while _G.AutoFarm do
                 task.wait(1)
+                -- Add your fishing logic here
             end
         end)
     end
@@ -53,7 +54,6 @@ for name, position in pairs(islandPositions) do
     })
 end
 
--- WalkSpeed + Infinite Jump (fully working)
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
@@ -66,13 +66,12 @@ Tabs.Player:AddSlider("WalkSpeedSlider", {
     Default = 16,
     Rounding = 0
 }):OnChanged(function(value)
-    local char = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local humanoid = char:FindFirstChildOfClass("Humanoid")
     if humanoid then
         humanoid.WalkSpeed = value
     end
 end)
-
 
 Tabs.Player:AddToggle("InfJumpToggle", {
     Title = "Infinite Jump",
@@ -121,4 +120,3 @@ Fluent:Notify({
     Content = "UI Loaded Successfully!",
     Duration = 5
 })
-
