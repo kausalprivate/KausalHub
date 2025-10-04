@@ -1,36 +1,39 @@
--- Load Fluent UI (you can change this to your hosted version later)
+-- Load Fluent UI from official latest release
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
--- Create the window
+-- Create the GUI window
 local Window = Fluent:CreateWindow({
     Title = "Fish It Hub",
-    SubTitle = "By You",
+    SubTitle = "By Kausal",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
     Acrylic = true,
-    Theme = "Dark"
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.RightControl
 })
 
 -- Tabs
 local Tabs = {
-    Main = Window:AddTab({ Title = "Main" }),
-    Teleport = Window:AddTab({ Title = "Teleport" }),
-    Player = Window:AddTab({ Title = "Player" })
+    Main = Window:AddTab({ Title = "Main", Icon = "rbxassetid://6023426923" }),
+    Teleport = Window:AddTab({ Title = "Teleport", Icon = "rbxassetid://6023426923" }),
+    Player = Window:AddTab({ Title = "Player", Icon = "rbxassetid://6023426923" })
 }
 
-------------------------------------------------------------
--- 1. MAIN TAB: Auto Farm Toggle
-------------------------------------------------------------
-local autoFarm = Tabs.Main:AddToggle("AutoFarm", {
-    Title = "Auto Farm",
-    Default = false
-})
+-----------------------------------------------------------------
+-- MAIN TAB: Auto Farm Toggle
+-----------------------------------------------------------------
 
-autoFarm:OnChanged(function(value)
-    _G.AutoFarmEnabled = value
-    if value then
+Tabs.Main:AddToggle("AutoFarm", {
+    Title = "Auto Farm",
+    Description = "Automatically fish and reel",
+    Default = false
+}):OnChanged(function(state)
+    _G.AutoFarm = state
+    if state then
         task.spawn(function()
-            while _G.AutoFarmEnabled do
-                -- TODO: Add your auto-farm logic here
-                -- Example: Cast + Reel
+            while _G.AutoFarm do
+                -- TODO: Add auto fishing logic here
+                -- Example:
                 -- game:GetService("ReplicatedStorage").Remotes.Cast:FireServer()
                 -- wait(1)
                 -- game:GetService("ReplicatedStorage").Remotes.Reel:FireServer()
@@ -40,92 +43,102 @@ autoFarm:OnChanged(function(value)
     end
 end)
 
-------------------------------------------------------------
--- 2. TELEPORT TAB: Island Teleports
-------------------------------------------------------------
+-----------------------------------------------------------------
+-- TELEPORT TAB: Islands
+-----------------------------------------------------------------
 
-local islandLocations = {
+local islandPositions = {
     ["Spawn Island"] = Vector3.new(0, 10, 0),
-    ["Pirate Island"] = Vector3.new(200, 10, 100),
-    ["Magma Island"] = Vector3.new(-300, 10, 250),
-    ["Snow Island"] = Vector3.new(400, 10, -100),
-    ["Desert Island"] = Vector3.new(150, 10, -350),
-    ["Sky Island"] = Vector3.new(0, 500, 0)
+    ["Pirate Island"] = Vector3.new(250, 10, 100),
+    ["Magma Island"] = Vector3.new(-300, 10, 150),
+    ["Snow Island"] = Vector3.new(350, 10, -200),
+    ["Desert Island"] = Vector3.new(150, 10, -300),
+    ["Sky Island"] = Vector3.new(0, 500, 0),
 }
 
-for islandName, position in pairs(islandLocations) do
-    Tabs.Teleport:AddButton(islandName, function()
-        local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            hrp.CFrame = CFrame.new(position)
+for name, position in pairs(islandPositions) do
+    Tabs.Teleport:AddButton({
+        Title = name,
+        Description = "Teleport to " .. name,
+        Callback = function()
+            local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.CFrame = CFrame.new(position)
+            end
         end
-    end)
+    })
 end
 
-------------------------------------------------------------
--- 3. PLAYER TAB: WalkSpeed, Infinite Jump, Teleport to Player
-------------------------------------------------------------
+-----------------------------------------------------------------
+-- PLAYER TAB: WalkSpeed, Infinite Jump, Teleport to Player
+-----------------------------------------------------------------
 
 -- WalkSpeed Slider
-Tabs.Player:AddSlider("WalkSpeedSlider", {
+Tabs.Player:AddSlider("WalkSpeed", {
     Title = "WalkSpeed",
-    Description = "Adjust your walk speed",
+    Description = "Adjust your movement speed",
     Min = 16,
     Max = 100,
     Default = 16
 }):OnChanged(function(value)
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+    local char = game.Players.LocalPlayer.Character
+    if char then
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum.WalkSpeed = value
+        end
+    end
 end)
 
 -- Infinite Jump Toggle
-local infJump = Tabs.Player:AddToggle("InfiniteJump", {
+Tabs.Player:AddToggle("InfJump", {
     Title = "Infinite Jump",
+    Description = "Jump as many times as you want",
     Default = false
-})
-
-infJump:OnChanged(function(state)
+}):OnChanged(function(state)
     _G.InfJump = state
 end)
 
--- Infinite Jump Logic
+-- Connect infinite jump logic
 game:GetService("UserInputService").JumpRequest:Connect(function()
     if _G.InfJump then
-        local humanoid = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
-        if humanoid then
-            humanoid:ChangeState("Jumping")
+        local char = game.Players.LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
         end
     end
 end)
 
 -- Teleport to Player Dropdown
-local allPlayers = {}
-for _, player in ipairs(game.Players:GetPlayers()) do
-    if player ~= game.Players.LocalPlayer then
-        table.insert(allPlayers, player.Name)
+local playerNames = {}
+for _, p in ipairs(game.Players:GetPlayers()) do
+    if p ~= game.Players.LocalPlayer then
+        table.insert(playerNames, p.Name)
     end
 end
 
-Tabs.Player:AddDropdown("PlayerTeleportDropdown", {
+Tabs.Player:AddDropdown("PlayerTP", {
     Title = "Teleport to Player",
-    Values = allPlayers,
-    Multi = false,
-    Default = allPlayers[1]
-}):OnChanged(function(selectedName)
-    local target = game.Players:FindFirstChild(selectedName)
+    Description = "Teleport to selected player",
+    Values = playerNames,
+    Default = playerNames[1]
+}):OnChanged(function(selected)
+    local target = game.Players:FindFirstChild(selected)
     if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-        local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            hrp.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
+        local me = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if me then
+            me.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
         end
     end
 end)
 
-------------------------------------------------------------
--- Notify when loaded
-------------------------------------------------------------
+-----------------------------------------------------------------
+-- Finished
+-----------------------------------------------------------------
+
 Fluent:Notify({
     Title = "Fish It Hub",
-    Content = "UI loaded successfully!",
-    Duration = 4
+    Content = "UI Loaded Successfully!",
+    Duration = 5
 })
-
