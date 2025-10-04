@@ -63,14 +63,16 @@ Tabs.Player:AddSlider("WalkSpeedSlider", {
     Description = "Adjust your movement speed",
     Min = 16,
     Max = 100,
-    Default = 16
+    Default = 16,
+    Rounding = 0
 }):OnChanged(function(value)
-    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local char = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
     local humanoid = char:FindFirstChildOfClass("Humanoid")
     if humanoid then
         humanoid.WalkSpeed = value
     end
 end)
+
 
 Tabs.Player:AddToggle("InfJumpToggle", {
     Title = "Infinite Jump",
@@ -119,3 +121,4 @@ Fluent:Notify({
     Content = "UI Loaded Successfully!",
     Duration = 5
 })
+
