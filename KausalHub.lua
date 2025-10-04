@@ -37,8 +37,8 @@ local islandPositions = {
     ["Kohana Island"] = Vector3.new(-633, 16, 609),
     ["Coral Reefs"] = Vector3.new(-2795, 7, 2130),
     ["Tropical Grove"] = Vector3.new(-2092, 53, 3757),
-    ["Desert Island"] = Vector3.new(150, 10, -300),
-    ["Sky Island"] = Vector3.new(0, 500, 0),
+    ["Crater Island"] = Vector3.new(908, 30, 4987),
+    ["Esoteric Depths"] = Vector3.new(2116, 111, 1292),
 }
 
 for name, position in pairs(islandPositions) do
@@ -120,5 +120,6 @@ Fluent:Notify({
     Content = "UI Loaded Successfully!",
     Duration = 5
 })
+
 
 
