@@ -32,7 +32,7 @@ Tabs.Main:AddToggle("AutoFarm", {
 end)
 
 local islandPositions = {
-    ["Spawn Island"] = Vector3.new(0, 10, 0),
+    ["Fisherman Island"] = Vector3.new(123, 3, 2782),
     ["Pirate Island"] = Vector3.new(250, 10, 100),
     ["Magma Island"] = Vector3.new(-300, 10, 150),
     ["Snow Island"] = Vector3.new(350, 10, -200),
@@ -114,3 +114,4 @@ Fluent:Notify({
     Content = "UI Loaded Successfully!",
     Duration = 5
 })
+
