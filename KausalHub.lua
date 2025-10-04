@@ -1,5 +1,5 @@
 -- Load Fluent UI (you can change this to your hosted version later)
-local Fluent = loadstring(game:HttpGet("https://raw.githubusercontent.com/jacklebeignet/Fluent-Reborn/refs/heads/main/src/ui.lua"))()
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- Create the window
 local Window = Fluent:CreateWindow({
@@ -128,3 +128,4 @@ Fluent:Notify({
     Content = "UI loaded successfully!",
     Duration = 4
 })
+
