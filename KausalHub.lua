@@ -62,7 +62,7 @@ Tabs.Player:AddSlider("WalkSpeedSlider", {
     Title = "WalkSpeed",
     Description = "Adjust your movement speed",
     Min = 16,
-    Max = 200,
+    Max = 500,
     Default = 16,
     Rounding = 0
 }):OnChanged(function(value)
@@ -120,6 +120,7 @@ Fluent:Notify({
     Content = "UI Loaded Successfully!",
     Duration = 5
 })
+
 
 
 
