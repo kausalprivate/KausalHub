@@ -53,39 +53,44 @@ for name, position in pairs(islandPositions) do
     })
 end
 
-Tabs.Player:AddSlider("WalkSpeed", {
+-- WalkSpeed + Infinite Jump (fully working)
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+
+Tabs.Player:AddSlider("WalkSpeedSlider", {
     Title = "WalkSpeed",
     Description = "Adjust your movement speed",
     Min = 16,
     Max = 100,
     Default = 16
 }):OnChanged(function(value)
-    local char = game.Players.LocalPlayer.Character
-    if char then
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        if hum then
-            hum.WalkSpeed = value
-        end
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.WalkSpeed = value
     end
 end)
 
-Tabs.Player:AddToggle("InfJump", {
+Tabs.Player:AddToggle("InfJumpToggle", {
     Title = "Infinite Jump",
-    Description = "Jump as many times as you want",
+    Description = "Jump infinitely",
     Default = false
 }):OnChanged(function(state)
     _G.InfJump = state
 end)
 
-game:GetService("UserInputService").JumpRequest:Connect(function()
-    if _G.InfJump then
-        local char = game.Players.LocalPlayer.Character
-        if char then
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+if not _G.InfJumpConnection then
+    _G.InfJumpConnection = UIS.JumpRequest:Connect(function()
+        if _G.InfJump then
+            local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local humanoid = char:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
         end
-    end
-end)
+    end)
+end
 
 local playerNames = {}
 for _, p in ipairs(game.Players:GetPlayers()) do
@@ -114,4 +119,3 @@ Fluent:Notify({
     Content = "UI Loaded Successfully!",
     Duration = 5
 })
-
